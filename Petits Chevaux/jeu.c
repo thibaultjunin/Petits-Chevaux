@@ -234,7 +234,6 @@ void newGame() {
 
     game.nbPlayers = input[0] - '0'; // https://stackoverflow.com/questions/5029840/convert-char-to-int-in-c-and-c
     game.players = (Player*)calloc(game.nbPlayers, sizeof(Player));
-    // game.players = (Player*)malloc(sizeof(Player) * game.nbPlayers);
 
     free(input);
 
@@ -380,7 +379,6 @@ void play(Game game) {
 
     for (int i = 0; i < 450; i++)
     {
-        // printf(" - %d ", plate[i]);
         if (plate[i] == 0) {
             printf(" ");
         }
@@ -689,17 +687,12 @@ Game walkingDeadHorse(Game game, int rand, int horse) {
 
     printf("\n\tLe cheval %s%d\033[0m avance de %d cases", game.players[game.playerPlaying].color, game.players[game.playerPlaying].horses[horse].number, rand);
 
-    //  && (game.players[game.playerPlaying].horses[horse].hasWalked + rand) > endPos[game.playerPlaying]
-    /*if ((game.players[game.playerPlaying].horses[horse].pos + rand) > endPos[game.playerPlaying] && game.players[game.playerPlaying].horses[horse].pos < endPos[game.playerPlaying]) {
-        int p = 1;
-    }*/
-    //if ((game.players[game.playerPlaying].horses[horse].hasWalked + rand) > 56) {
+
     if(newTheoricalPosition > endPos[game.playerPlaying] &&
         game.players[game.playerPlaying].horses[horse].hasWalked+rand > 55
         ){
-        // (game.players[game.playerPlaying].horses[horse].pos + rand) - endPos[game.playerPlaying]);
 
-        printf("... mais il recule de %d cases", (newTheoricalPosition - endPos[game.playerPlaying])); // FIXME: Put real number
+        printf("... mais il recule de %d cases", (newTheoricalPosition - endPos[game.playerPlaying]));
 
         newTheoricalPosition = newTheoricalPosition - ((newTheoricalPosition - endPos[game.playerPlaying]) *2);
         if (newTheoricalPosition < 1) {
@@ -865,7 +858,7 @@ void WatsonWalk(Game game, int r) {
             return;
         }
 
-        if (game.players[game.playerPlaying].horses[k].pos > 100) { // ((game.playerPlaying + 1) * 100)
+        if (game.players[game.playerPlaying].horses[k].pos > 100) {
 
             if (((game.players[game.playerPlaying].horses[k].pos - ((game.playerPlaying + 1) * 100))) + 1 == r) {
                 walkingDeadHorse(game, r, k);
@@ -898,9 +891,8 @@ void WatsonWalk(Game game, int r) {
             if (i != game.playerPlaying) {
                 for (int j = 0; j < 4; j++)
                 {
-                    if (posi == game.players[i].horses[j].pos) { //  && !game.players[i].horses[j].inStand
-                        walkingDeadHorse(game, r, k); // FIXME: Bug, cheval mangé innexistant
-                        // T-800, veux faire avancé le cheval 0 (donc 1) alors qu'il est dans son écurie
+                    if (posi == game.players[i].horses[j].pos) {
+                        walkingDeadHorse(game, r, k);
                         return;
                     }
                 }
@@ -938,10 +930,6 @@ void WatsonWalk(Game game, int r) {
     return;
 
 }
-
-/*
-    Il faut marcher 56 cases pour faire un tour
-*/
 
 /*
                   1  2  3
