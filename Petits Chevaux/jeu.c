@@ -19,7 +19,7 @@ char* toLowerCase(char str[]) {
 
 void delay(int s) {
     #ifdef _WIN32
-        // Sleep(s * 1000);
+        Sleep(s * 1000);
     #else
         sleep(s * 1000);
     #endif
