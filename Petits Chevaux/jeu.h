@@ -54,6 +54,7 @@
 	Game exitHorse(Game game);
 	void Watson(Game game, int rand);
 	void WatsonWalk(Game game, int r);
+	void youAreFreeMyFriend(Game game);
 
 	void printOver(void);
 	int menu(void);

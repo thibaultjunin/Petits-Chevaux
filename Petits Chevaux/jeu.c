@@ -107,7 +107,7 @@ Game loadGame(Game game) { // https://www.tutorialspoint.com/read-write-structur
     {
         int NameSize;
         fread(&NameSize, sizeof(int), 1, inf);
-        game.players[i].name = calloc(sizeof(char), NameSize);
+        game.players[i].name = calloc(sizeof(char), NameSize+1);
         if (game.players[i].name == NULL) {
             printf("\n\n\tImpossible d'allouer la memoire necessaire...");
             exit(1);
@@ -118,7 +118,7 @@ Game loadGame(Game game) { // https://www.tutorialspoint.com/read-write-structur
 
         int ColorSize;
         fread(&ColorSize, sizeof(int), 1, inf);
-        game.players[i].color = calloc(sizeof(char), ColorSize);
+        game.players[i].color = calloc(sizeof(char), ColorSize+1);
         if (game.players[i].color == NULL) {
             printf("\n\n\tImpossible d'allouer la memoire necessaire...");
             exit(1);
@@ -198,17 +198,63 @@ void newGame() {
         game.nbPlayers = 4;
         game.players = (Player*)calloc(game.nbPlayers, sizeof(Player));
 
-        game.players[0].name = "DEBUG";
-        game.players[0].color = colors[0];
+        game.players[0].name = calloc(6, sizeof(char));
+        if (game.players[0].name == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[0].name, "DEBUG");
 
-        game.players[1].name = "MODE";
-        game.players[1].color = colors[1];
+        game.players[0].color = calloc(strlen(colors[0]) + 1, sizeof(char));
+        if (game.players[0].color == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[0].color, colors[0]);
 
-        game.players[2].name = NPCNames[2];
-        game.players[2].color = colors[2];
+        game.players[1].name = calloc(6, sizeof(char));
+        if (game.players[1].name == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[1].name, "MODE");
 
-        game.players[3].name = NPCNames[3];
-        game.players[3].color = colors[3];
+        game.players[1].color = calloc(strlen(colors[1]) + 1, sizeof(char));
+        if (game.players[1].color == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[1].color, colors[1]);
+
+        game.players[2].npc = 1;
+        game.players[2].name = calloc(strlen(NPCNames[2]) + 1, sizeof(char));
+        if (game.players[2].name == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[2].name, NPCNames[2]);
+
+        game.players[2].color = calloc(strlen(colors[2]) + 1, sizeof(char));
+        if (game.players[2].color == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[2].color, colors[2]);
+
+        game.players[3].npc = 1;
+        game.players[3].name = calloc(strlen(NPCNames[3]) + 1, sizeof(char));
+        if (game.players[3].name == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[3].name, NPCNames[3]);
+
+        game.players[3].color = calloc(strlen(colors[3]) + 1, sizeof(char));
+        if (game.players[3].color == NULL) {
+            printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+            exit(1);
+        }
+        strcpy(game.players[3].color, colors[3]);
 
         for (int i = 0; i < game.nbPlayers; i++) {
             for (int j = 0; j < 4; j++) {
@@ -248,13 +294,33 @@ void newGame() {
         }
         if (strcmp(toLowerCase(input), "pnj") == 0) {
             game.players[i].npc = 1;
-            game.players[i].name = NPCNames[i];
-            game.players[i].color = colors[i];
+
+            game.players[i].name = calloc(strlen(NPCNames[i]) + 1, sizeof(char));
+            if (game.players[i].name == NULL) {
+                printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+                exit(1);
+            }
+            strcpy(game.players[i].name, NPCNames[i]);
+
+            game.players[i].color = calloc(strlen(colors[i]) + 1, sizeof(char));
+            if (game.players[i].color == NULL) {
+                printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+                exit(1);
+            }
+            strcpy(game.players[i].color, colors[i]);
+
             printf("Pret pour vous servir, je suis %s%s\033[0m", game.players[i].color, game.players[i].name);
             free(input);
         }
         else {
-            game.players[i].color = colors[i];
+
+            game.players[i].color = calloc(strlen(colors[i]) + 1, sizeof(char));
+            if (game.players[i].color == NULL) {
+                printf("\n\n\tImpossible d'allouer la memoire necessaire...");
+                exit(1);
+            }
+            strcpy(game.players[i].color, colors[i]);
+
             game.players[i].name = input;
             printf("Bienvenue %s%s\033[0m", game.players[i].color, input);
         }
@@ -310,6 +376,15 @@ void restartGame() {
 int startPos[4] = { 3, 17, 31, 45 };
 int endPos[4] = { 2, 16, 30, 44 };
 
+void youAreFreeMyFriend(Game game) {
+    for (int i = 0; i < game.nbPlayers; i++)
+    {
+        free(game.players[i].name);
+        free(game.players[i].color);
+    }
+    free(game.players);
+}
+
 void play(Game game) {
     clearScreen();
 
@@ -320,6 +395,7 @@ void play(Game game) {
             if (game.players[i].horses[j].pos == 9999) {
                 printOver();
                 printf("\n\n\t%s%s\033[0m gagne!\n\n\n", game.players[i].color, game.players[i].name);
+                youAreFreeMyFriend(game);
                 return;
             }
         }
@@ -377,7 +453,7 @@ void play(Game game) {
     };
 
 
-    for (int i = 0; i < 450; i++)
+    for (int i = 0; i < 444; i++)
     {
         if (plate[i] == 0) {
             printf(" ");
@@ -630,7 +706,7 @@ Game walk(Game game, int rand) {
             input = getLine();
         }
         while (game.players[game.playerPlaying].horses[(input[0] - '0') - 1].inStand) {
-            printf("\n\tCe cheval est toujours dans l'écurie... Veuillez choisir un cheval en jeu:\n\t\t");
+            printf("\n\tCe cheval est toujours dans l'ecurie... Veuillez choisir un cheval en jeu:\n\t\t");
             free(input);
             input = getLine();
         }
