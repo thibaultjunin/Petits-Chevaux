@@ -19,7 +19,7 @@ char* toLowerCase(char str[]) {
 
 void delay(int s) {
     #ifdef _WIN32
-        Sleep(s * 1000);
+        // Sleep(s * 1000);
     #else
         sleep(s * 1000);
     #endif
@@ -396,6 +396,9 @@ void play(Game game) {
                 printOver();
                 printf("\n\n\t%s%s\033[0m gagne!\n\n\n", game.players[i].color, game.players[i].name);
                 youAreFreeMyFriend(game);
+                printf("\t");
+                pause();
+                menu();
                 return;
             }
         }
