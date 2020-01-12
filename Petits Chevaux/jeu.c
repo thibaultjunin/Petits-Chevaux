@@ -521,18 +521,37 @@ void play(Game game) {
 
     delay(2);
 
-    printf("\n\n\tC'est au tour de %s%s\033[0m !\n\t",
+    printf("\n\n\tC'est au tour de %s%s\033[0m !",
         game.players[game.playerPlaying].color,
         game.players[game.playerPlaying].name
     );
     delay(1);
-    printf("%s%s\033[0m lance le de...\n\t", game.players[game.playerPlaying].color, game.players[game.playerPlaying].name);
+    
     int r = (rand() % 6) + 1; // https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c https://www.dummies.com/programming/c/how-to-generate-random-numbers-in-c-programming/
     if (game.players[game.playerPlaying].npc == 0) {
-        pause();
-        printf("\tet obtient %d !\n", r);
+        char* input;
+        printf("\n\tQue voulez-vous faire?\n\t\t[1] - Lancer le de\n\t\t[2] - Quitter\n\t\t");
+        input = getLine();
+        while (strcmp(input, "1") && strcmp(input, "2")) {
+            printf("\nJe ne reconnait pas cette option... Veuillez reessayer:");
+            free(input);
+            input = getLine();
+        }
+        if (!strcmp(input, "1")) {
+            free(input);
+            printf("\n\t%s%s\033[0m lance le de...", game.players[game.playerPlaying].color, game.players[game.playerPlaying].name);
+            delay(1);
+            printf("et obtient %d !\n", r);
+        }
+        else {
+            free(input);
+            youAreFreeMyFriend(game);
+            menu();
+            return;
+        }
     }
     else {
+        printf("\n\t%s%s\033[0m lance le de...\n\t", game.players[game.playerPlaying].color, game.players[game.playerPlaying].name);
         delay(1);
         printf("et obtient %d !\n", r);
     }
@@ -1010,6 +1029,7 @@ void WatsonWalk(Game game, int r) {
 }
 
 /*
+
                   1  2  3
                   56    4
                   55    5
@@ -1025,6 +1045,7 @@ void WatsonWalk(Game game, int r) {
                   33    27
                   32    28
                   31 30 29
+
 */
 
 /*
