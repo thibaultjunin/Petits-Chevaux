@@ -40,41 +40,41 @@ void saveGame(Game game) { // https://www.tutorialspoint.com/read-write-structur
         return;
     }
 
-    // Sauvegarde du nombre de joueurs
+    // Saving player number
     fwrite(&game.nbPlayers, sizeof(int), 1, of);
 
-    // Sauvegarde du joueur entrain de jouer
+    // Saving current player playing
     fwrite(&game.playerPlaying, sizeof(int), 1, of);
 
     // Sauvegarde des joueurs
     for (int i = 0; i < game.nbPlayers; i++)
     {
-        // Sauvegarde du nom du joueur
+        // Saving player's name
         int NameSize = strlen(game.players[i].name);
         fwrite(&NameSize, sizeof(int), 1, of);
         fwrite(game.players[i].name, sizeof(char), NameSize, of);
 
-        // Sauvegarde de la couleur du joueur
+        // Saving player's color
         int ColorSize = strlen(game.players[i].color);
         fwrite(&ColorSize, sizeof(int), 1, of);
         fwrite(game.players[i].color, sizeof(char), ColorSize, of);
 
-        // Sauvegarde du type de joueur
+        // Saving player's type
         fwrite(&game.players[i].npc, sizeof(int), 1, of);
 
-        // Sauvegarde des chevaux du joueur
+        // Saving player's horses
         for (int j = 0; j < 4; j++)
         {
-            // Sauvegarde du numéro
+            // Saving horse's number
             fwrite(&game.players[i].horses[j].number, sizeof(int), 1, of);
 
-            // Sauvegarde de la position
+            // Saving horse's position
             fwrite(&game.players[i].horses[j].pos, sizeof(int), 1, of);
 
-            // Sauvegarde du nombre de pas
+            // Saving horse's steps
             fwrite(&game.players[i].horses[j].hasWalked, sizeof(int), 1, of);
 
-            // Sauvegarde de l'écurie
+            // Saving horse's stand
             fwrite(&game.players[i].horses[j].inStand, sizeof(int), 1, of);
         }
     }
@@ -91,10 +91,8 @@ Game loadGame(Game game) { // https://www.tutorialspoint.com/read-write-structur
         exit(1);
     }
     
-    // Ecriture du nombre de joueurs
     fread(&game.nbPlayers, sizeof(int), 1, inf);
 
-    // Ecriture du joueur en train de jouer
     fread(&game.playerPlaying, sizeof(int), 1, inf);
 
     game.players = (Player*)calloc(game.nbPlayers, sizeof(Player));
@@ -360,7 +358,7 @@ void restartGame() {
 
         char* input;
         input = getLine();
-        if (strncmp(toLowerCase(input), "o", 1) == 0) {
+        if (strcmp(toLowerCase(input), "o") == 0) {
             newGame();
             return;
         }
@@ -465,10 +463,7 @@ void play(Game game) {
             printf("\n ");
         }
         else {
-            /*
-                C'EST HORRIBLE, A CORRIGER SI Y'A LE TEMPS
-            */
-            int chevoxOnPos = 0; // Désolé pour le nom de la variable, j'ai craqué
+            int chevoxOnPos = 0; // Sorry about the name of the variable, I cracked.
             int player = 0;
             int horse = 0;
             for (int k = 0; k < game.nbPlayers; k++)
@@ -585,7 +580,7 @@ void play(Game game) {
                 input = getLine();
             }
             if (!strncmp(input, "1", 1)) {
-                // Sortir cheval
+                // Exit Horse
                 game = exitHorse(game);
                 free(input);
             }else if (!strncmp(input, "2", 1)) {
@@ -595,7 +590,6 @@ void play(Game game) {
                     game.players[game.playerPlaying].horses[2].inStand &&
                     game.players[game.playerPlaying].horses[3].inStand) {
                     printf("\n\t%s%s\033[0m n'a aucun cheval sur le plateau ! J'en sort donc un.", game.players[game.playerPlaying].color, game.players[game.playerPlaying].name);
-                    // Si on fait sortir un chevox en tapant 2. La position n'est pas bonne !
                     game = exitHorse(game);
                 }else{
                     game = walk(game, r);
@@ -704,7 +698,7 @@ Game walk(Game game, int rand) {
     }
     else {
 
-        // Si plusieurs chevaux sortie, demander quel chevox faire avancé
+        // If more than one horse out, ask which horse to move forward.
         printf("\n\n\tQuel cheval voulez-vous faire avancer?");
         if (!game.players[game.playerPlaying].horses[0].inStand) {
             printf("\n\t\t[1] - Le cheval numero %d", game.players[game.playerPlaying].horses[0].number);
@@ -742,7 +736,7 @@ Game walk(Game game, int rand) {
 }
 
 Game walkingDeadHorse(Game game, int rand, int horse) {
-    // Si le joueur est sur sa case de fin
+    // If the player is on his end square
     if (game.players[game.playerPlaying].horses[horse].pos == endPos[game.playerPlaying]) {
         if (rand == 1) {
             game.players[game.playerPlaying].horses[horse].pos = ((game.playerPlaying + 1) * 100) + 1;
@@ -750,20 +744,20 @@ Game walkingDeadHorse(Game game, int rand, int horse) {
             return game;
         }
         printf("\n\tLe cheval %s%d\033[0m ne bouge pas etant donne qu'il se trouve en bas de son escalier", game.players[game.playerPlaying].color, game.players[game.playerPlaying].horses[horse].number);
-        return game; // Si il fait qqch d'autre que 1, il bouge pas. (non préciser sur wikipedia)
+        return game; // If he does anything other than 1, he's not moving. (not specified on wikipedia)
     }
 
-    // Si le joueur est sur un escalier
+    // If the player is on the stairs
     if (game.players[game.playerPlaying].horses[horse].pos > 100) {
 
         int cleanedPos = game.players[game.playerPlaying].horses[horse].pos - ((game.playerPlaying + 1) * 100);
-        // Si le joueur fait le chiffre exacte pour passer a la case suivante
+        // If the player makes the exact number to move to the next square
         if (cleanedPos + 1 == rand) {
             game.players[game.playerPlaying].horses[horse].pos = game.players[game.playerPlaying].horses[horse].pos + 1;
             printf("\n\tLe cheval %s%d\033[0m monte une marche de son escalier", game.players[game.playerPlaying].color, game.players[game.playerPlaying].horses[horse].number);
             return game;
         }
-        // Si le joueur est sur la dernière case de l'escalier et qu'il fait 6, il gagne
+        // If the player is on the last square of the stairs and he makes 6, he wins
         if (cleanedPos == 6) {
             if (rand == 6) {
                 game.players[game.playerPlaying].horses[horse].pos = 9999;
@@ -776,10 +770,10 @@ Game walkingDeadHorse(Game game, int rand, int horse) {
 
     }
 
-    // Calcul de la prochaine position
+    // Calculation of the next position
     int newTheoricalPosition = game.players[game.playerPlaying].horses[horse].pos + rand;
     if (newTheoricalPosition > 56) {
-        newTheoricalPosition = (newTheoricalPosition - 56); // On utilise donc, le dépassement comme nouvelle position
+        newTheoricalPosition = (newTheoricalPosition - 56); // The overtaking is therefore used as a new position.
     }
 
     printf("\n\tLe cheval %s%d\033[0m avance de %d cases", game.players[game.playerPlaying].color, game.players[game.playerPlaying].horses[horse].number, rand);
@@ -802,9 +796,9 @@ Game walkingDeadHorse(Game game, int rand, int horse) {
         game.players[game.playerPlaying].horses[horse].hasWalked = walked - rand;
     }
 
-    game.players[game.playerPlaying].horses[horse].pos = newTheoricalPosition; // On defini la nouvelle position du chevox
+    game.players[game.playerPlaying].horses[horse].pos = newTheoricalPosition; // We define the new position of the chevox
 
-    game.players[game.playerPlaying].horses[horse].hasWalked += rand; // On ajoute le nombre de case a celui qui a été marché
+    game.players[game.playerPlaying].horses[horse].hasWalked += rand; // We add the number of squares to the number that has been walked on.
 
     for (int i = 0; i < game.nbPlayers; i++)
     {
