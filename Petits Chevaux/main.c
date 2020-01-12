@@ -64,7 +64,7 @@ void printPause() {
 
 
 int main(int argc, char* argv[]) {
-	srand(time(NULL)); // https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c // C4244
+	srand((unsigned int)time(NULL)); // https://stackoverflow.com/questions/822323/how-to-generate-a-random-int-in-c // C4244
 
 	return menu();
 }

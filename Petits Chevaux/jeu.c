@@ -569,8 +569,7 @@ void play(Game game) {
                 // Sortir cheval
                 game = exitHorse(game);
                 free(input);
-            }
-            if (!strncmp(input, "2", 1)) { // C6001	Utilisation de la mémoire non initialisée 'input'. Ne comprend pas le warning...
+            }else if (!strncmp(input, "2", 1)) {
 
                 if (game.players[game.playerPlaying].horses[0].inStand &&
                     game.players[game.playerPlaying].horses[1].inStand &&
